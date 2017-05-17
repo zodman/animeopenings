@@ -1,4 +1,7 @@
 <?php
+
+	include_once "trans.php";
+
 	include_once "names.php";
 	$videos = $names;
 
@@ -48,8 +51,8 @@
 
 		$filename = $videos[$series][$video]["file"];
 
-		$title = "Anime Openings";
-		$description = "Anime openings from hundreds of series in high-quality";
+		$title = $trans["Anime Openings"];
+		$description = $trans["Anime openings from hundreds of series in high-quality"];
 	}
 
 	$isEgg = isset($videos[$series][$video]["egg"]);
@@ -91,6 +94,21 @@
 				return "*";
 		}
 	}
+
+function is_ssl() {
+    if ( isset($_SERVER['HTTPS']) ) {
+        if ( 'on' == strtolower($_SERVER['HTTPS']) )
+            return true;
+        if ( '1' == $_SERVER['HTTPS'] )
+            return true;
+    } elseif ( isset($_SERVER['SERVER_PORT']) && ( '443' == $_SERVER['SERVER_PORT'] ) ) {
+        return true;
+    }
+    return false;
+}
+$protocol = is_ssl() === true ? 'https://' : 'http://';
+
+
 ?>
 <!DOCTYPE html>
 <html prefix="og: http://ogp.me/ns#">
@@ -103,19 +121,19 @@
 
 		<!-- Open Graph Tags -->
 		<meta property="og:type" content="article"> <!-- article or video.other -->
-		<meta property="og:url" content="https://openings.moe/?video=<?php echo $s_filename; ?>">
-		<meta property="og:site_name" content="openings.moe">
+		<meta property="og:url" content="<?php echo $protocol.$_SERVER['HTTP_HOST']; ?>/?video=<?php echo $s_filename; ?>">
+		<meta property="og:site_name" content="<?php echo $_SERVER['HTTP_HOST']; ?>">
 		<meta property="og:title" content="<?php echo $title; ?>">
 		<meta property="og:description" content="<?php echo $description; ?>">
-		<meta property="al:web:url" content="https://openings.moe/?video=<?php echo $s_filename; ?>">
+		<meta property="al:web:url" content="<?php echo $protocol.$_SERVER['HTTP_HOST'];?>/?video=<?php echo $s_filename; ?>">
 
 		<!-- CSS and JS external resources block -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 		<link rel="stylesheet" type="text/css" href="CSS/main.css">
 		<link rel="stylesheet" type="text/css" href="CSS/fonts.css">
 		<link rel="stylesheet" type="text/css" href="CSS/subtitles.css">
 
-		<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+		<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
 		<script src="JS/main.js"></script>
 		<script defer src="JS/fitCurves.js"></script>
 		<script defer src="JS/subtitles.js"></script>
@@ -157,10 +175,10 @@
 			<span id="closemenubutton" class="quadbutton fa fa-times"></span>
 
 			<p id="title"><?php echo $video; ?> </p>
-			<p id="source"><?php echo "From " . $series; ?></p>
+			<p id="source"><?php echo $trans["From "] . $series; ?></p>
 			<span id="song"><?php // If we have the data, echo it
 				if ($songKnown)
-					echo "Song: &quot;" . $songTitle . "&quot; by " . $songArtist;
+					echo $trans["Song"]. ": &quot;" . $songTitle . "&quot; ". $trans["by"].  $songArtist;
 				else { // Otherwise, let's just pretend it never existed... or troll the user.
 					if ($isEgg || mt_rand(0,100) == 1)
 						echo "Song: &quot;Sandstorm&quot; by Darude";
@@ -169,8 +187,8 @@
 
 			<ul id="linkarea">
 				<li class="link"<?php if ($isEgg) echo " hidden"; ?>><a href="?video=<?php if (!$isEgg) echo $s_filename; ?>" id="videolink">Link to this video</a></li>
-				<li class="link"<?php if ($isEgg) echo " hidden"; ?>><a href="video/<?php if (!$isEgg) echo $filename; ?>" id="videodownload" download>Download this video</a></li>
-				<li class="link"><a id="listlink" href="list">Video list</a></li>
+				<li class="link"<?php if ($isEgg) echo " hidden"; ?>><a href="video/<?php if (!$isEgg) echo $filename; ?>" id="videodownload" download><?php echo $trans["Download this video"];?></a></li>
+				<li class="link"><a id="listlink" href="list"><?php echo $trans["Video list"];?></a></li>
 				<li class="link"><a href="hub">Hub</a></li>
 			</ul>
 
