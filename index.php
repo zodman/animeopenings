@@ -1,7 +1,6 @@
 <?php
 
 	include_once "trans.php";
-
 	include_once "names.php";
 	$videos = $names;
 
@@ -43,7 +42,7 @@
 			}
 		}
 
-		$title = (isset($videos[$series][$video]["egg"]) ? "Secret~" : ($video . " from " . $series));
+		$title = (isset($videos[$series][$video]["egg"]) ? "Secret~" : ($video . " ". trans("From"). " ". $series));
 		$description = "";
 	} else { // Otherwise pick a random video
 		$series = array_rand($videos);
@@ -51,8 +50,8 @@
 
 		$filename = $videos[$series][$video]["file"];
 
-		$title = $trans["Anime Openings"];
-		$description = $trans["Anime openings from hundreds of series in high-quality"];
+		$title = trans("Anime Openings");
+		$description = trans("Anime openings from hundreds of series in high-quality");
 	}
 
 	$isEgg = isset($videos[$series][$video]["egg"]);
@@ -108,6 +107,8 @@ function is_ssl() {
 }
 $protocol = is_ssl() === true ? 'https://' : 'http://';
 
+$json_encoded = json_encode($trans);
+$javascript_trans = "var TRANS=$json_encoded;";
 
 ?>
 <!DOCTYPE html>
@@ -133,7 +134,13 @@ $protocol = is_ssl() === true ? 'https://' : 'http://';
 		<link rel="stylesheet" type="text/css" href="CSS/fonts.css">
 		<link rel="stylesheet" type="text/css" href="CSS/subtitles.css">
 
-		<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+    <script>
+<?php
+  echo $javascript_trans;
+?>
+    </script>
+
 		<script src="JS/main.js"></script>
 		<script defer src="JS/fitCurves.js"></script>
 		<script defer src="JS/subtitles.js"></script>
@@ -175,27 +182,32 @@ $protocol = is_ssl() === true ? 'https://' : 'http://';
 			<span id="closemenubutton" class="quadbutton fa fa-times"></span>
 
 			<p id="title"><?php echo $video; ?> </p>
-			<p id="source"><?php echo $trans["From "] . $series; ?></p>
+      <p id="source"><?php echo trans("From")." " . $series; ?></p>
 			<span id="song"><?php // If we have the data, echo it
-				if ($songKnown)
-					echo $trans["Song"]. ": &quot;" . $songTitle . "&quot; ". $trans["by"].  $songArtist;
+				if ($songKnown){
+				  $_song = trans("Song"). ": &quot;" . $songTitle . "&quot; ". trans("by") ." ".  $songArtist;
+          echo $_song;
+        }
 				else { // Otherwise, let's just pretend it never existed... or troll the user.
 					if ($isEgg || mt_rand(0,100) == 1)
 						echo "Song: &quot;Sandstorm&quot; by Darude";
 				} ?></span>
-			<p id="subs"<?php if (!$subtitlesAvailable) echo ' style="display:none"'; ?>>Subtitles by <span id="subtitle-attribution"><?php echo $subtitleAttribution; ?></span></p>
+      <p id="subs"<?php if (!$subtitlesAvailable) echo ' style="display:none"'; ?>>
+            <?php echo trans("Subtitles by");?>
+            <span id="subtitle-attribution"><?php echo $subtitleAttribution; ?> </span>
+        </p>
 
 			<ul id="linkarea">
-				<li class="link"<?php if ($isEgg) echo " hidden"; ?>><a href="?video=<?php if (!$isEgg) echo $s_filename; ?>" id="videolink">Link to this video</a></li>
-				<li class="link"<?php if ($isEgg) echo " hidden"; ?>><a href="video/<?php if (!$isEgg) echo $filename; ?>" id="videodownload" download><?php echo $trans["Download this video"];?></a></li>
-				<li class="link"><a id="listlink" href="list"><?php echo $trans["Video list"];?></a></li>
+      <li class="link"<?php if ($isEgg) echo " hidden"; ?>><a href="?video=<?php if (!$isEgg) echo $s_filename; ?>" id="videolink"><?php echo trans("Link to this video");?></a></li>
+				<li class="link"<?php if ($isEgg) echo " hidden"; ?>><a href="video/<?php if (!$isEgg) echo $filename; ?>" id="videodownload" download><?php echo trans("Download this video");?></a></li>
+				<li class="link"><a id="listlink" href="list"><?php echo trans("Video list");?></a></li>
 				<li class="link"><a href="hub">Hub</a></li>
 			</ul>
 
-			<p id="settings-head" class="accordion-head"><i class="fa fa-chevron-right"></i> Saved settings</p>
+      <p id="settings-head" class="accordion-head"><i class="fa fa-chevron-right"></i> <?php echo trans("Saved settings");?></p>
 			<table id="settings-body" class="accordion-body">
 				<tr>
-					<td><label for="show-title-checkbox">Show Video Title</label></td>
+        <td><label for="show-title-checkbox"><?php echo trans("Show Video Title");?></label></td>
 					<td>
 						<input id="show-title-checkbox" type="checkbox" checked><label for="show-title-checkbox">Yes</label>
 						<label id="show-title-delay">after <input type="number" min="0" value="0" step="1"> seconds</label>

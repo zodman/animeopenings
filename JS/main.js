@@ -7,6 +7,7 @@
    givanse ( http://stackoverflow.com/a/23230280 ) - Mobile Swipe Detection
    maj160 - Fullscreen Functions, Subtitle Renderer
    aty2 - Menu toggle keyboard button
+   zodman - Translation
 */
 
 // Global Variables
@@ -21,6 +22,15 @@ var mouseIdle, lastMousePos = {x:0,y:0};
 var VideoElement, Tooltip = {Element: null, Showing: ""};
 
 var filename = () => VideoElement.children[0].src.split("video/")[1].replace(/\.\w+$/, "");
+
+var t = function(key){
+  if( key in TRANS){
+    return TRANS[key];
+  }
+  return key;
+
+};
+
 
 window.onload = function() {
   VideoElement = document.getElementById("bgvid");
@@ -47,7 +57,7 @@ window.onload = function() {
       history.replaceState({video: 0, list: [video], directLink: !!location.search, egg: true}, document.title, location.origin + location.pathname);
     } else {
       // The title may have been set to a generic title in PHP.
-      document.title = video.title + " from " + video.source;
+      document.title = video.title + " "+t("from")+" " + video.source;
       history.replaceState({video: 0, list: [video], directLink: !!location.search}, document.title, location.origin + location.pathname + "?video=" + filename());
     }
 
@@ -307,13 +317,13 @@ function setVideoElements() {
   VideoElement.load();
   document.getElementById("subtitle-attribution").innerHTML = (video.subtitles ? "[" + video.subtitles + "]" : "");
   document.getElementById("title").innerHTML = video.title;
-  document.getElementById("source").innerHTML = "From " + video.source;
+  document.getElementById("source").innerHTML = t("From")+" " + video.source;
   if (video.egg) {
     document.title = "Secret~";
     document.getElementById("videolink").parentNode.setAttribute("hidden","");
     document.getElementById("videodownload").parentNode.setAttribute("hidden","");
   } else {
-    document.title = video.title + " from " + video.source;
+    document.title = video.title + " "+t("from")+" " + video.source;
     document.getElementById("videolink").parentNode.removeAttribute("hidden");
     document.getElementById("videodownload").parentNode.removeAttribute("hidden");
     document.getElementById("videolink").href = "/?video=" + video.file.replace(/\.\w+$/, "");
@@ -321,8 +331,8 @@ function setVideoElements() {
   }
 
   var song = "";
-  if (video.song) song = "Song: &quot;" + video.song.title + "&quot; by " + video.song.artist;
-  else if (video.egg || (Math.random() <= 0.01)) song = "Song: &quot;Sandstorm&quot; by Darude";
+  if (video.song) song = t("Song")+": &quot;" + video.song.title + "&quot; "+t("by")+" " + video.song.artist;
+  else if (video.egg || (Math.random() <= 0.01)) song = t("Song")+": &quot;Sandstorm&quot; by Darude";
   document.getElementById("song").innerHTML = song;
 
   // Set button to show play icon.
@@ -535,7 +545,7 @@ function tooltip(text, css) {
 }
 function showVideoTitle(delay) {
   var currVideo = Videos.list[Videos.video];
-  $("#title-popup").stop(true).text(currVideo.title + " from " + currVideo.source).delay(1000 * delay).fadeIn().promise().done(function(){this.delay(3500).fadeOut()});
+  $("#title-popup").stop(true).text(currVideo.title + " "+ t("from")+" " + currVideo.source).delay(1000 * delay).fadeIn().promise().done(function(){this.delay(3500).fadeOut()});
 }
 
 // Keyboard functions
